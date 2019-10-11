@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -42,54 +43,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(encoder());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-	        .httpBasic()
-	    	.and()
-	    	.authorizeRequests()        	
-	    	.antMatchers("/v2/api-docs").permitAll()
-	    	.antMatchers("/api/v1/user/save").anonymous()
-	    	.anyRequest().authenticated()
-	    	.and()
-	    	.csrf().disable()
-	    	.formLogin().disable()
-	    	.headers().frameOptions().sameOrigin();
-        
-        
-    }
-
 	@Bean 
 	public PasswordEncoder encoder(){ 
 		return new BCryptPasswordEncoder(); 
 	}
-	
-	@Bean
-    public FilterRegistrationBean corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-        return bean;
-    }
 
-	@Override
+    @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs",
-                                   "/configuration/ui",
-                                   "/swagger-resources/**",
-                                   "/configuration/security",
-                                   "/swagger-ui.html",
-                                   "/webjars/**",
-                                   "/webjars/springfox-swagger-ui/springfox.js?v=2.9.2:1",
-                                   "/csrf", 
-                                   "/","/oauth/register",
-                                   "/h2-console",
-                                   "/api/v1/user/save");
+    	web.ignoring().antMatchers("/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/webjars/springfox-swagger-ui/springfox.js?v=2.9.2:1",
+                "/csrf", 
+                "/",
+                "/h2-console/**",
+                "/oauth/register",
+                "/api/v1/user/register");
     }
 }

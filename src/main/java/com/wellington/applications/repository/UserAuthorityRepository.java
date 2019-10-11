@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.wellington.applications.model.UserAuthority;
+import com.wellington.applications.entity.UserAuthority;
 
 public interface UserAuthorityRepository extends JpaRepository<UserAuthority, Long> {
 	

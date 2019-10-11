@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.wellington.applications.model.UserEntity;
+import com.wellington.applications.entity.UserEntity;
 import com.wellington.applications.repository.UserAuthorityRepository;
 import com.wellington.applications.repository.UserRepository;
 
@@ -39,7 +39,7 @@ public class UserDetailsService implements org.springframework.security.core.use
 		List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
 		userAuthorityRepository.findByUserId(userId).stream()
 			.forEach(u -> {
-				grantedAuthorities.add(new SimpleGrantedAuthority(u.getAuthority().getName()));
+				grantedAuthorities.add(new SimpleGrantedAuthority(u.getAuthority().getDescription()));
 			});
 		
 		return grantedAuthorities;

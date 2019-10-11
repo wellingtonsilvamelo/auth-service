@@ -34,27 +34,21 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId(RESOURCE_ID);
     }
-
+    
     @Override
     public void configure(HttpSecurity http) throws Exception {
-    	String roles = StringUtils.join(getPreparedRoles(), ",");
-    	
-    	http.
-        anonymous().disable()
-        .authorizeRequests()
-        .antMatchers("/api/admin").access("hasRole('"+AuthorityEnum.ROLE_SYSTEMADMIN.name()+"')")
-        .antMatchers("/api/**").access("hasAnyRole("+ roles +")")
-        .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+        http.requestMatchers()
+                .antMatchers("/**")
+                .and()
+                .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('read')")
+                .antMatchers(HttpMethod.OPTIONS, "/**").access("#oauth2.hasScope('read')")
+                .antMatchers(HttpMethod.POST, "/**").access("#oauth2.hasScope('write')")
+                .antMatchers(HttpMethod.PUT, "/**").access("#oauth2.hasScope('write')")
+                .antMatchers(HttpMethod.PATCH, "/**").access("#oauth2.hasScope('write')")
+                .antMatchers(HttpMethod.DELETE, "/**").access("#oauth2.hasScope('write')");
     }
-    
-    private List<String> getPreparedRoles() {
-		List<String> preparedRoles = new ArrayList<>();
-		
-		Stream.of(AuthorityEnum.values()).map(AuthorityEnum::name).forEach(e -> {
-			preparedRoles.add("'"+ e +"'");
-		});
-		
-		return preparedRoles;
-	}
 
 }
